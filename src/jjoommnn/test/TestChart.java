@@ -27,45 +27,40 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class TestChart
 {
-
     public static void main( String[] args ) throws Exception
     {
-        System.out.println("Images");
-        
+        System.out.println( "Images" );
+
         CategoryDataset data = createDataset();
         JFreeChart chart = createChart( data );
-        
+
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         ChartUtilities.writeChartAsJPEG( bOut, chart, 400, 300 );
-        
-        // step 1: creation of a document-object
+
         Document document = new Document();
-        
-        try {
-            // step 2:
-            // we create a writer that listens to the document
-            // and directs a PDF-stream to a file
-            PdfWriter.getInstance(document, new FileOutputStream("C:\\Temp\\Images.pdf"));
-            
-            // step 3: we open the document
+
+        try
+        {
+            PdfWriter.getInstance( document, new FileOutputStream( "C:\\Temp\\Images.pdf" ) );
+
             document.open();
-            
-            // step 4:
-            document.add(new Paragraph("A picture of my dog: otsoe.jpg"));
+
+            document.add( new Paragraph( "A picture of my dog: otsoe.jpg" ) );
             Image jpg = Image.getInstance( bOut.toByteArray() );
-            document.add(jpg);
+            document.add( jpg );
         }
-        catch(DocumentException de) {
-            System.err.println(de.getMessage());
+        catch( DocumentException de )
+        {
+            System.err.println( de.getMessage() );
         }
-        catch(IOException ioe) {
-            System.err.println(ioe.getMessage());
+        catch( IOException ioe )
+        {
+            System.err.println( ioe.getMessage() );
         }
-        
-        // step 5: we close the document
+
         document.close();
     }
-    
+
     private static CategoryDataset createDataset()
     {
         // row keys...
@@ -108,7 +103,7 @@ public class TestChart
     {
         // create the chart...
         final JFreeChart chart = ChartFactory.createBarChart( "Bar Chart 한글", // chart
-                                                                                // title
+                                                                              // title
                 "Category", // domain axis label
                 "Value", // range axis label
                 dataset, // data
@@ -125,15 +120,15 @@ public class TestChart
 
         // get a reference to the plot for further customisation...
         final CategoryPlot plot = chart.getCategoryPlot();
-        plot.setBackgroundPaint( Color.lightGray );
-        plot.setDomainGridlinePaint( Color.white );
-        plot.setRangeGridlinePaint( Color.white );
-        
-        Font font = plot.getDomainAxis().getLabelFont();
+        // plot.setBackgroundPaint( Color.lightGray );
+        plot.setDomainGridlinePaint( Color.black );
+        plot.setRangeGridlinePaint( Color.black );
+
+        //Font font = plot.getDomainAxis().getLabelFont();
         // X축 라벨
-        plot.getDomainAxis().setLabelFont(new Font("돋움", font.getStyle(), font.getSize()));
+        //plot.getDomainAxis().setLabelFont( new Font( "돋움", font.getStyle(), font.getSize() ) );
         // X축 도메인
-        plot.getDomainAxis().setTickLabelFont(new Font("돋움", font.getStyle(), 10));
+        //plot.getDomainAxis().setTickLabelFont( new Font( "돋움", font.getStyle(), 10 ) );
 
         // set the range axis to display integers only...
         final NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis();
@@ -144,9 +139,9 @@ public class TestChart
         renderer.setDrawBarOutline( false );
 
         // set up gradient paints for series...
-        final GradientPaint gp0 = new GradientPaint( 0.0f, 0.0f, Color.blue, 0.0f, 0.0f, Color.lightGray );
-        final GradientPaint gp1 = new GradientPaint( 0.0f, 0.0f, Color.green, 0.0f, 0.0f, Color.lightGray );
-        final GradientPaint gp2 = new GradientPaint( 0.0f, 0.0f, Color.red, 0.0f, 0.0f, Color.lightGray );
+        final GradientPaint gp0 = new GradientPaint( 0.0f, 0.0f, Color.blue, 0.0f, 0.0f, Color.blue );
+        final GradientPaint gp1 = new GradientPaint( 0.0f, 0.0f, Color.green, 0.0f, 0.0f, Color.green );
+        final GradientPaint gp2 = new GradientPaint( 0.0f, 0.0f, Color.red, 0.0f, 0.0f, Color.red );
         renderer.setSeriesPaint( 0, gp0 );
         renderer.setSeriesPaint( 1, gp1 );
         renderer.setSeriesPaint( 2, gp2 );
@@ -157,5 +152,4 @@ public class TestChart
 
         return chart;
     }
-
 }
