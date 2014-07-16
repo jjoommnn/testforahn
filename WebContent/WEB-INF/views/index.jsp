@@ -3,9 +3,10 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>PDF Download Test</title>
 </head>
 <body>
-    <h1>Index Page</h1>
+    <h1>PDF Download Test</h1>
+    <a href="./pdfdownload.do">Download</a>
 </body>
 </html>
