@@ -17,11 +17,17 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.DatasetRenderingOrder;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -62,15 +68,23 @@ public class Index
             
             document.add( new Paragraph( "-- 바 차트 시작--", font ) );
             
-            CategoryDataset data = createDataset();
-            JFreeChart chart = createChart( data );
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-            ChartUtilities.writeChartAsJPEG( bOut, chart, 400, 300 );
+            ChartUtilities.writeChartAsJPEG( bOut, barChart(), 400, 300 );
             
             Image jpg = Image.getInstance( bOut.toByteArray() );
             document.add( jpg );
             
             document.add( new Paragraph( "-- 바 차트 끝 --", font ) );
+            
+            bOut = new ByteArrayOutputStream();
+            ChartUtilities.writeChartAsJPEG( bOut, barLineChart(), 400, 300 );
+            jpg = Image.getInstance( bOut.toByteArray() );
+            document.add( jpg );
+            
+            bOut = new ByteArrayOutputStream();
+            ChartUtilities.writeChartAsJPEG( bOut, pieChart(), 400, 300 );
+            jpg = Image.getInstance( bOut.toByteArray() );
+            document.add( jpg );
         }
         catch( DocumentException de )
         {
@@ -89,7 +103,7 @@ public class Index
     
     //http://www.java2s.com/Code/Java/Chart/CatalogChart.htm
     
-    private static CategoryDataset createDataset()
+    private static JFreeChart barChart()
     {
         // row keys...
         final String series1 = "한글";
@@ -123,15 +137,9 @@ public class Index
         dataset.addValue( 2.0, series3, category3 );
         dataset.addValue( 3.0, series3, category4 );
         dataset.addValue( 6.0, series3, category5 );
-
-        return dataset;
-    }
-    
-    private static JFreeChart createChart( final CategoryDataset dataset )
-    {
+        
         // create the chart...
-        final JFreeChart chart = ChartFactory.createBarChart( "Bar Chart 한글", // chart
-                                                                              // title
+        final JFreeChart chart = ChartFactory.createBarChart( "Bar Chart 한글", // chart title
                 "Category", // domain axis label
                 "Value", // range axis label
                 dataset, // data
@@ -192,6 +200,118 @@ public class Index
         domainAxis.setCategoryLabelPositions( CategoryLabelPositions.createUpRotationLabelPositions( Math.PI / 6.0 ) );
         // OPTIONAL CUSTOMISATION COMPLETED.
 
+        return chart;
+    }
+    
+    private static JFreeChart barLineChart()
+    {
+        // create the first dataset...
+        DefaultCategoryDataset dataset1 = new DefaultCategoryDataset();
+        dataset1.addValue(1.0, "S1", "Category 1");
+        dataset1.addValue(4.0, "S1", "Category 2");
+        dataset1.addValue(3.0, "S1", "Category 3");
+        dataset1.addValue(5.0, "S1", "Category 4");
+        dataset1.addValue(5.0, "S1", "Category 5");
+        dataset1.addValue(7.0, "S1", "Category 6");
+        dataset1.addValue(7.0, "S1", "Category 7");
+        dataset1.addValue(8.0, "S1", "Category 8");
+
+        dataset1.addValue(5.0, "S2", "Category 1");
+        dataset1.addValue(7.0, "S2", "Category 2");
+        dataset1.addValue(6.0, "S2", "Category 3");
+        dataset1.addValue(8.0, "S2", "Category 4");
+        dataset1.addValue(4.0, "S2", "Category 5");
+        dataset1.addValue(4.0, "S2", "Category 6");
+        dataset1.addValue(2.0, "S2", "Category 7");
+        dataset1.addValue(1.0, "S2", "Category 8");
+
+        // create the first renderer...
+        //      final CategoryLabelGenerator generator = new StandardCategoryLabelGenerator();
+        final CategoryItemRenderer renderer = new BarRenderer();
+        //    renderer.setLabelGenerator(generator);
+        renderer.setItemLabelsVisible(true);
+        
+        final CategoryPlot plot = new CategoryPlot();
+        plot.setDataset(dataset1);
+        plot.setRenderer(renderer);
+        
+        plot.setDomainAxis(new CategoryAxis("Category"));
+        plot.setRangeAxis(new NumberAxis("Value"));
+
+        plot.setOrientation(PlotOrientation.VERTICAL);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinesVisible(true);
+
+        // now create the second dataset and renderer...
+        DefaultCategoryDataset dataset2 = new DefaultCategoryDataset();
+        dataset2.addValue(9.0, "T1", "Category 1");
+        dataset2.addValue(7.0, "T1", "Category 2");
+        dataset2.addValue(2.0, "T1", "Category 3");
+        dataset2.addValue(6.0, "T1", "Category 4");
+        dataset2.addValue(6.0, "T1", "Category 5");
+        dataset2.addValue(9.0, "T1", "Category 6");
+        dataset2.addValue(5.0, "T1", "Category 7");
+        dataset2.addValue(4.0, "T1", "Category 8");
+
+        final CategoryItemRenderer renderer2 = new LineAndShapeRenderer();
+        plot.setDataset(1, dataset2);
+        plot.setRenderer(1, renderer2);
+
+        // create the third dataset and renderer...
+        final ValueAxis rangeAxis2 = new NumberAxis("Axis 2");
+        plot.setRangeAxis(1, rangeAxis2);
+
+        DefaultCategoryDataset dataset3 = new DefaultCategoryDataset();
+        dataset3.addValue(94.0, "R1", "Category 1");
+        dataset3.addValue(75.0, "R1", "Category 2");
+        dataset3.addValue(22.0, "R1", "Category 3");
+        dataset3.addValue(74.0, "R1", "Category 4");
+        dataset3.addValue(83.0, "R1", "Category 5");
+        dataset3.addValue(9.0, "R1", "Category 6");
+        dataset3.addValue(23.0, "R1", "Category 7");
+        dataset3.addValue(98.0, "R1", "Category 8");
+
+        plot.setDataset(2, dataset3);
+        final CategoryItemRenderer renderer3 = new LineAndShapeRenderer();
+        plot.setRenderer(2, renderer3);
+        plot.mapDatasetToRangeAxis(2, 1);
+
+        // change the rendering order so the primary dataset appears "behind" the 
+        // other datasets...
+        plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+        
+        plot.getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        
+        final JFreeChart chart = new JFreeChart(plot);
+        chart.setTitle("Overlaid Bar Chart");
+        
+        return chart;
+    }
+    
+    private static JFreeChart pieChart()
+    {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("One", new Double(43.2));
+        dataset.setValue("Two", new Double(10.0));
+        dataset.setValue("Three", new Double(27.5));
+        dataset.setValue("Four", new Double(17.5));
+        dataset.setValue("Five", new Double(11.0));
+        dataset.setValue("Six", new Double(19.4));
+        
+        JFreeChart chart = ChartFactory.createPieChart(
+                "Pie Chart Demo 1",  // chart title
+                dataset,             // data
+                true,               // include legend
+                true,
+                false
+            );
+
+            PiePlot plot = (PiePlot) chart.getPlot();
+            plot.setLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+            plot.setNoDataMessage("No data available");
+            plot.setCircular(false);
+            plot.setLabelGap(0.02);
+            
         return chart;
     }
 }
